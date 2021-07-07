@@ -11,7 +11,7 @@
 int main(){
     FILE *archivoE;
     FILE *archivoS;
-    char aEntrada[20],aSalida[20];
+    char aEntrada[20]="nombres.txt",aSalida[20]="ruta_nombres.txt",command[50]="",inst[20]="touch ";
     char palabras[CANTIDAD_LINEAS][MAXIMA_LONGITUD_CADENA];
     char buferArchivo[MAXIMA_LONGITUD_CADENA];
 	  char letras[50]={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
@@ -59,15 +59,24 @@ int main(){
         printf ("\nError al crear el proceso");
         exit(0);
       break;
-      case 0:
-        printf("\nPadre (PID= %d )   --->  Hijo (pid= %d ) \n",getppid(),getpid());  
-        for(int i=1;i<=2;i++)//--tiene dos hijos 
-          printf("\t Hijo (PID= %d )   ---> hijo %d  \n",getppid(),i); 
-              //exit(0);
+      case 0: 
+        for(int i=1;i<=2;i++){
+          if(i==1){
+            printf("\t Hijo (PID= %d )   ---> num hijo %d  \n",getppid(),i); 
+            strcat(inst,aSalida);
+            printf("\tSe creo el archivo de salida con exito\n");
+            strcpy( command, inst);
+            system(command);
+          }else{
+            printf("\t Hijo (PID= %d )   ---> num hijo %d  \n",getppid(),i); 
+          }
+          
+        }
+
       break;
       default:
-        archivoE=fopen(/*aEntrada*/"nombres.txt","r");
-
+        archivoE=fopen(aEntrada,"r");
+        printf("\nHola soy el Padre (PID= %d )   ---> y lei mi archivo  %s \n",getppid(),aEntrada);
         if(archivoE == NULL) {
           printf("El fichero no se ha podido abrir, no existe.");
         } else {
@@ -79,7 +88,7 @@ int main(){
           cont=i;
         }
 
-          fclose(archivoE);
+        fclose(archivoE);
 
           for (i = 0; i < cont; i++){
             printf("Nombres: %s\n", palabras[i]);
