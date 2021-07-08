@@ -16,7 +16,7 @@ int main(){
     char buferArchivo[Max_long_cad];
 	  char letras[50]={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
     int numero_Columnas, numero_Filas, i, j,contador_letras=0,cont;
-    int pidh;
+    int pid;
 
     printf("Este programa realiza la búsqueda de un nombre ");
     printf("dada una matriz realizada de acuerdo al número de");
@@ -54,7 +54,7 @@ int main(){
 
     
 
-    switch(pidh=fork()){
+    switch(pid=fork()){
       case -1:
         printf ("\nError al crear el proceso");
         exit(0);
@@ -83,6 +83,8 @@ int main(){
               printf("\t Hijo %d -----> (PID= %d )\t\tSe creo el archivo de salida con exito.\n",i,getpid());
               system(command);
               printf("\t\t\t================Hijo %d: Termine (pid=%i)================\n\n",i, getpid());
+              exit(0);
+              
             }else{
               printf("\t Hijo %d -----> (PID= %d )\n",i,getpid());
               strcat(inst,"touch ");
@@ -91,16 +93,29 @@ int main(){
               printf("\t Hijo %d -----> (PID= %d )\t\tSe creo el archivo de salida con exito.\n",i,getpid());
               system(command);
               printf("\t\t\t================Hijo %d: Termine (pid=%i)================\n\n",i, getpid());
+              exit(0);
+              
             }
+            break;
             
           }else{
             printf("\t Hijo (PID= %d )   ---> num hijo %d  \n",getppid(),i); 
+            
+
+
+
           }
           
         }
 
       break;
       default:
+        
+        while((pid=waitpid(-1,NULL,0))>0){
+          printf("=====>Padre (pid=%i) : llego mi hijo 1 (pid=%i), mi archivo de salida está listo. \n\n",getpid(),pid);
+        };
+
+
         archivoE=fopen(aEntrada,"r");
         printf("\nHola soy el Padre (PID= %d )   ---> y lei mi archivo  %s \n",getppid(),aEntrada);
         if(archivoE == NULL) {
@@ -115,7 +130,7 @@ int main(){
         }
 
         fclose(archivoE);
-
+        //imprime nombres del archivo 
           for (i = 0; i < cont; i++){
             printf("Nombres: %s\n", palabras[i]);
           }
