@@ -69,28 +69,28 @@ int main(){
             strcpy( command, inst1);
             if (system(command)==0){
               printf("\t Hijo %d -----> (PID= %d )\n",i,getpid());
-              printf("\t\tEl archivo ya existe\n");
-              printf("\t\tSe realizara el borrado del mismo....\n\n\n");
+              printf("\t Hijo %d -----> (PID= %d )\t\tEl archivo ya existe\n",i,getpid());
+              printf("\t Hijo %d -----> (PID= %d )\t\tSe realizara el borrado del mismo....\n\n\n",i,getpid());
               //Eliminar archivo 
               strcat(inst1,"rm ");
               strcat(inst1,aSalida);
               strcpy( command, inst1);
-              printf("\t\tSe borro el archivo con exito.\n");
+              printf("\t Hijo %d -----> (PID= %d )\t\tSe borro el archivo con exito.\n",i,getpid());
               //crear archivo
               strcat(inst,"touch ");
               strcat(inst,aSalida);
               strcpy( command, inst);
-              printf("\t\tSe creo el archivo de salida con exito.\n");
+              printf("\t Hijo %d -----> (PID= %d )\t\tSe creo el archivo de salida con exito.\n",i,getpid());
               system(command);
-              printf("\t\t\tHijo %d: Termine (pid=%i) \n\n",i, getpid());
+              printf("\t\t\t================Hijo %d: Termine (pid=%i)================\n\n",i, getpid());
             }else{
               printf("\t Hijo %d -----> (PID= %d )\n",i,getpid());
               strcat(inst,"touch ");
               strcat(inst,aSalida);
               strcpy( command, inst);
-              printf("\t\tSe creo el archivo de salida con exito.\n");
+              printf("\t Hijo %d -----> (PID= %d )\t\tSe creo el archivo de salida con exito.\n",i,getpid());
               system(command);
-              printf("\t\t\tHijo %d: Termine (pid=%i) \n\n",i, getpid());
+              printf("\t\t\t================Hijo %d: Termine (pid=%i)================\n\n",i, getpid());
             }
             
           }else{
