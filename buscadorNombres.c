@@ -4,16 +4,16 @@
 #include <math.h>
 #include <sys/wait.h>
 #include <string.h>
-#define MAXIMA_LONGITUD_CADENA 31
-#define CANTIDAD_LINEAS 13
+#define Max_long_cad 31
+#define num_lineas 13
 
 
 int main(){
     FILE *archivoE;
     FILE *archivoS;
-    char aEntrada[20]="nombres.txt",aSalida[20]="ruta_nombres.txt",command[50]="",inst[20]="touch ";
-    char palabras[CANTIDAD_LINEAS][MAXIMA_LONGITUD_CADENA];
-    char buferArchivo[MAXIMA_LONGITUD_CADENA];
+    char aEntrada[20]="nombres.txt",aSalida[20]="ruta_nombres.txt",command[50]="",inst[20]="",inst1[20]="";
+    char palabras[num_lineas][Max_long_cad];
+    char buferArchivo[Max_long_cad];
 	  char letras[50]={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
     int numero_Columnas, numero_Filas, i, j,contador_letras=0,cont;
     int pidh;
@@ -62,11 +62,37 @@ int main(){
       case 0: 
         for(int i=1;i<=2;i++){
           if(i==1){
-            printf("\t Hijo (PID= %d )   ---> num hijo %d  \n",getppid(),i); 
-            strcat(inst,aSalida);
-            printf("\tSe creo el archivo de salida con exito\n");
-            strcpy( command, inst);
-            system(command);
+            //para validar existencia 
+            strcat(inst1,"ls . ");
+            strcat(inst1,aSalida);
+            strcat(inst1,">>error 2>&1");
+            strcpy( command, inst1);
+            if (system(command)==0){
+              printf("\t Hola soy hijo %d -----> (PID= %d )\n",i,getpid());
+              printf("\t\tEl archivo ya existe\n");
+              printf("\t\tSe realizara el borrado del mismo....\n\n\n");
+              //Eliminar archivo 
+              strcat(inst1,"rm ");
+              strcat(inst1,aSalida);
+              strcpy( command, inst1);
+              printf("\t\tSe borro el archivo con exito.\n");
+              //crear archivo
+              strcat(inst,"touch ");
+              strcat(inst,aSalida);
+              strcpy( command, inst);
+              printf("\tSe creo el archivo de salida con exito.\n");
+              system(command);
+              printf("Hijo %d: Termine (pid=%i) \n\n",i, getpid());
+            }else{
+              printf("\t Hola soy hijo %d -----> (PID= %d )\n",i,getpid());
+              strcat(inst,"touch ");
+              strcat(inst,aSalida);
+              strcpy( command, inst);
+              printf("\tSe creo el archivo de salida con exito.\n");
+              system(command);
+              printf("Hijo %d: Termine (pid=%i) \n\n",i, getpid());
+            }
+            
           }else{
             printf("\t Hijo (PID= %d )   ---> num hijo %d  \n",getppid(),i); 
           }
@@ -78,12 +104,12 @@ int main(){
         archivoE=fopen(aEntrada,"r");
         printf("\nHola soy el Padre (PID= %d )   ---> y lei mi archivo  %s \n",getppid(),aEntrada);
         if(archivoE == NULL) {
-          printf("El fichero no se ha podido abrir, no existe.");
+          printf("El archivo no se ha podido abrir, no existe.");
         } else {
             i=0;
-          while (fgets(buferArchivo, MAXIMA_LONGITUD_CADENA, archivoE)){
+          while (fgets(buferArchivo, Max_long_cad, archivoE)){
           strtok(buferArchivo, "\n");
-          memcpy(palabras[i], buferArchivo, MAXIMA_LONGITUD_CADENA);
+          memcpy(palabras[i], buferArchivo, Max_long_cad);
           i++;
           cont=i;
         }
