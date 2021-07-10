@@ -14,9 +14,9 @@ int main(){
     char aEntrada[20]="nombres.txt",aSalida[20]="ruta_nombres.txt",command[50]="",inst[20]="",inst1[20]="";
     char palabras[num_lineas][Max_long_cad];
     char buferArchivo[Max_long_cad];
-	  char letras[50]={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
-    int numero_Columnas, numero_Filas, i, j,contador_letras=0,cont;
-    int pid;
+    char letras[50]={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
+    int numero_Columnas, numero_Filas, i,e, j,contador_letras=0,cont;
+    int pid,pidHijo;
 
     printf("Este programa realiza la búsqueda de un nombre ");
     printf("dada una matriz realizada de acuerdo al número de");
@@ -51,69 +51,66 @@ int main(){
 //    scanf("%s",aEntrada);
 //    printf ("\n\n\tIngrese el nombre del archivo de salida: ");
 //    scanf("%s",aSalida);
-
-    
-
-    switch(pid=fork()){
-      case -1:
-        printf ("\nError al crear el proceso");
+    e=1;
+    while(e<3){
+      pid=fork();
+      if(pid==-1){
+        printf("\nError al crear el proceso \n");
         exit(0);
-      break;
-      case 0: 
-        for(int i=1;i<=2;i++){
-          if(i==1){
+
+      }else if(pid==0){
+        if(e==1){
             //para validar existencia 
             strcat(inst1,"ls . ");
             strcat(inst1,aSalida);
             strcat(inst1,">>error 2>&1");
             strcpy( command, inst1);
             if (system(command)==0){
-              printf("\t Hijo %d -----> (PID= %d )\n",i,getpid());
-              printf("\t Hijo %d -----> (PID= %d )\t\tEl archivo ya existe\n",i,getpid());
-              printf("\t Hijo %d -----> (PID= %d )\t\tSe realizara el borrado del mismo....\n\n\n",i,getpid());
+              printf("\t Hijo %d -----> (PID= %d )\n",e,getpid());
+              printf("\t Hijo %d -----> (PID= %d )\t\tEl archivo ya existe\n",e,getpid());
+              printf("\t Hijo %d -----> (PID= %d )\t\tSe realizara el borrado del mismo....\n\n\n",e,getpid());
               //Eliminar archivo 
               strcat(inst1,"rm ");
               strcat(inst1,aSalida);
               strcpy( command, inst1);
-              printf("\t Hijo %d -----> (PID= %d )\t\tSe borro el archivo con exito.\n",i,getpid());
+              printf("\t Hijo %d -----> (PID= %d )\t\tSe borro el archivo con exito.\n",e,getpid());
               //crear archivo
               strcat(inst,"touch ");
               strcat(inst,aSalida);
               strcpy( command, inst);
-              printf("\t Hijo %d -----> (PID= %d )\t\tSe creo el archivo de salida con exito.\n",i,getpid());
+              printf("\t Hijo %d -----> (PID= %d )\t\tSe creo el archivo de salida con exito.\n",e,getpid());
               system(command);
-              printf("\t\t\t================Hijo %d: Termine (pid=%i)================\n\n",i, getpid());
-              exit(0);
-              
+              printf("\t\t\t================Hijo %d: Termine (pid=%i)================\n\n",e, getpid());
+              exit(0);           
             }else{
-              printf("\t Hijo %d -----> (PID= %d )\n",i,getpid());
+              printf("\t Hijo %d -----> (PID= %d )\n",e,getpid());
               strcat(inst,"touch ");
               strcat(inst,aSalida);
               strcpy( command, inst);
-              printf("\t Hijo %d -----> (PID= %d )\t\tSe creo el archivo de salida con exito.\n",i,getpid());
+              printf("\t Hijo %d -----> (PID= %d )\t\tSe creo el archivo de salida con exito.\n",e,getpid());
               system(command);
-              printf("\t\t\t================Hijo %d: Termine (pid=%i)================\n\n",i, getpid());
-              exit(0);
-              
+              printf("\t\t\t================Hijo %d: Termine (pid=%i)================\n\n",e, getpid());
+              exit(0);          
             }
+            
+            
+          }else if(e==2){
+            printf("\t Hijo (PID= %d )   ---> num hijo %d  \n",getpid(),e); 
+
             break;
-            
-          }else{
-            printf("\t Hijo (PID= %d )   ---> num hijo %d  \n",getppid(),i); 
-            
-
-
-
           }
-          
-        }
 
-      break;
-      default:
-        
-        while((pid=waitpid(-1,NULL,0))>0){
-          printf("=====>Padre (pid=%i) : llego mi hijo 1 (pid=%i), mi archivo de salida está listo. \n\n",getpid(),pid);
-        };
+      }
+      if(e==1){
+          pidHijo=pid;
+      };
+      e++;
+
+    }
+    while((waitpid(pidHijo,NULL,0))>0){
+      printf("=====>Padre (pid=%i) : llego mi hijo 1 (pid=%i), mi archivo de salida está listo. \n\n",getpid(),pidHijo);
+      
+    };
 
 
         archivoE=fopen(aEntrada,"r");
@@ -136,6 +133,6 @@ int main(){
           }
         }
 
-    };
+  
     return 0;
 }
